@@ -4,7 +4,7 @@ import CardContent from '@material-ui/core/CardContent';
 import '../App.css';
 import TextField from '@material-ui/core/TextField';
 import CustomSelector from './CustomSelector';
-import { getMainUnits} from "../services/QuantityMeasurmentService";
+import {getConvertedValue, getMainUnits, getSubUnit} from "../services/QuantityMeasurmentService";
 
 export default class QuantityMeasurement extends React.Component {
 
@@ -27,6 +27,48 @@ export default class QuantityMeasurement extends React.Component {
                 this.setState({mainUnitsList: response.data})
             }
         ).catch((error) => console.log(error))
+    }
+
+    getSubUnit = event => {
+        this.selectedUnits = event.target.value;
+        console.log("selected MainUnits " + this.selectedUnits);
+        getSubUnit(event.target.value).then(response => {
+            console.log(response)
+            this.setState({subUnitsList: response.data,})
+        })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
+    getFirstSubUnits = event => {
+        this.firstSubUnit = event.target.value;
+        console.log("selected First SubUnits " + this.firstSubUnit);
+    }
+
+    getSecondSubUnits = event => {
+        this.secondSubUnit = event.target.value;
+        console.log("selected Second SubUnits " + this.secondSubUnit);
+    }
+
+    convertFromFirstToSecondUnit = event => {
+        this.setState({firstTextFieldValue: event.target.value});
+        getConvertedValue(event.target.value, this.firstSubUnit, this.secondSubUnit,).then((response) => {
+            console.log(response);
+            this.setState({
+                secondTextFieldValue: response.data.value
+            })
+        })
+    }
+
+    convertFromSecondToFirstUnit = event => {
+        this.setState({secondTextFieldValue: event.target.value});
+        getConvertedValue(event.target.value, this.secondSubUnit, this.firstSubUnit).then((response) => {
+            console.log(response);
+            this.setState({
+                firstTextFieldValue: response.data.value
+            })
+        })
     }
 
     componentDidMount() {
